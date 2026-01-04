@@ -24,6 +24,14 @@ const bot = new TelegramBot(process.env.BOT_TOKEN, {
     },
   },
 });
+// Add this line right after to clear any "hanging" updates
+bot.on("polling_error", (error) => {
+  if (error.code === "ETELEGRAM" && error.message.includes("409 Conflict")) {
+    console.log("Waiting for old session to terminate...");
+  } else {
+    console.error("Polling Error:", error);
+  }
+});
 const userState = {};
 
 // Start command
