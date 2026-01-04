@@ -15,7 +15,15 @@ if (!process.env.BOT_TOKEN) {
   throw new Error("❌ BOT_TOKEN is missing");
 }
 
-const bot = new TelegramBot(process.env.BOT_TOKEN, { polling: true });
+// const bot = new TelegramBot(process.env.BOT_TOKEN, { polling: true });
+const bot = new TelegramBot(process.env.BOT_TOKEN, {
+  polling: {
+    autoStart: true,
+    params: {
+      timeout: 10,
+    },
+  },
+});
 const userState = {};
 
 // Start command
