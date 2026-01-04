@@ -1,6 +1,19 @@
+const express = require("express");
+
 const TelegramBot = require("node-telegram-bot-api");
 const pool = require("./db");
 require("dotenv").config();
+
+// --- ADD THIS PORT BINDING BLOCK ---
+const app = express();
+const PORT = process.env.PORT || 10000;
+app.get("/", (req, res) => res.send("Bot is running..."));
+app.listen(PORT, () => console.log(`Server listening on port ${PORT}`));
+// ------------------------------------
+
+if (!process.env.BOT_TOKEN) {
+  throw new Error("❌ BOT_TOKEN is missing");
+}
 
 const bot = new TelegramBot(process.env.BOT_TOKEN, { polling: true });
 const userState = {};
