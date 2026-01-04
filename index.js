@@ -4,6 +4,51 @@ const TelegramBot = require("node-telegram-bot-api");
 const pool = require("./db");
 require("dotenv").config();
 
+// --- 1. NEW: AUTO-DATABASE SETUP ---
+const initDb = async () => {
+  try {
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS students (
+        student_id TEXT PRIMARY KEY,
+        student_name TEXT,
+        father_name TEXT
+      );
+
+      CREATE TABLE IF NOT EXISTS grades (
+        id SERIAL PRIMARY KEY,
+        student_id TEXT REFERENCES students(student_id),
+        course_name TEXT,
+        quiz NUMERIC DEFAULT 0,
+        project NUMERIC DEFAULT 0,
+        mid_exam NUMERIC DEFAULT 0,
+        final_exam NUMERIC DEFAULT 0
+      );
+
+      CREATE TABLE IF NOT EXISTS complaints (
+        id SERIAL PRIMARY KEY,
+        student_id TEXT,
+        course_name TEXT,
+        complaint TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+
+      -- Add the test student automatically
+      INSERT INTO students (student_id, student_name, father_name)
+      VALUES ('MAU1600540', 'Haile Mariam', 'worku')
+      ON CONFLICT (student_id) DO NOTHING;
+
+      INSERT INTO grades (student_id, course_name, quiz, project, mid_exam, final_exam)
+      VALUES ('MAU1600540', 'CS 3rd Year', 15, 20, 25, 40)
+      ON CONFLICT DO NOTHING;
+    `);
+    console.log("✅ Database Tables & Test Data Ready!");
+  } catch (err) {
+    console.error("❌ DB Init Error:", err.message);
+  }
+};
+initDb();
+// -----------------------------------
+
 // --- ADD THIS PORT BINDING BLOCK ---
 const app = express();
 const PORT = process.env.PORT || 10000;
