@@ -173,8 +173,8 @@ bot.on("message", async (msg) => {
       );
     }
   } catch (err) {
-    console.error("BOT ERROR 👉", err.message);
-    bot.sendMessage(chatId, "⚠️ Server error. Please try again later.");
+    console.error("BOT ERROR 👉", err); // Changed from err.message to err
+    bot.sendMessage(chatId, `⚠️ Server error: ${err.message}`);
     delete userState[chatId];
   }
 });
