@@ -33,13 +33,53 @@ const initDb = async () => {
       );
 
       -- Add the test student automatically
-      INSERT INTO students (student_id, student_name, father_name)
-      VALUES ('MAU1600540', 'Haile Mariam', 'worku')
-      ON CONFLICT (student_id) DO NOTHING;
+      INSERT INTO students (student_id, student_name, father_name) VALUES
+('MAU1600024', 'ABEL', 'SHEWANGZAW'), ('MAU1600056', 'ABYU', 'ESHETIE'),
+('MAU1600090', 'AKILILU', 'AYKA'), ('MAU1600113', 'ALEMU', 'MEKETE'),
+('MAU1600114', 'ALEMU', 'SEWNET'), ('MAU1600170', 'ASRESACH', 'ADUGNA'),
+('MAU1600243', 'BELAYNEH', 'BEKELE'), ('MAU1600247', 'BELAYNESH', 'DIRESS'),
+('MAU1600248', 'BELAYNESH', 'GETIE'), ('MAU1600269', 'BETELHEM', 'NIGATU'),
+('MAU1602191', 'BEYENE', 'DEMEKE'), ('MAU1600359', 'BOSENA', 'SHUMET'),
+('MAU1600375', 'DANIEL', 'ZIGABE'), ('MAU1602192', 'DIGIS', 'BIRHAN'),
+('MAU1600478', 'ENATIHUN', 'YIMER'), ('MAU1600480', 'ENCHALEW', 'AZIMERAW'),
+('MAU1600481', 'ENDALE', 'YIRGA'), ('MAU1600506', 'EYERUS', 'SHIBABAW'),
+('MAU1600524', 'FASIKA', 'KIBURIE'), ('MAU1600525', 'FASIKA', 'SHEGAW'),
+('MAU1600540', 'FETENECH', 'WORKU'), ('MAU1600545', 'FIKIRE', 'GIRMA'),
+('MAU1600557', 'FTAMLAK', 'GETU'), ('MAU1600605', 'GETANEH', 'MARKIE'),
+('MAU1600620', 'GIZACHEW', 'KASSA'), ('MAU1600683', 'HENOK', 'SFAT'),
+('MAU1600704', 'HULUNAYEHU', 'ASHEBIR'), ('MAU1600756', 'KINDU', 'FIKAD'),
+('MAU1600805', 'MANAYEH', 'BAYILE'), ('MAU1600822', 'MASTEWAL', 'MEHARIW'),
+('MAU1600979', 'NADIYA', 'AZANAW'), ('MAU1600982', 'NAOL', 'ABEBE'),
+('MAU1602196', 'SAMUEL', 'ALEMSW'), ('MAU1601098', 'SIMEGNAW', 'MUNYE'),
+('MAU1601148', 'TEKEBA', 'AWEKE'), ('MAU1601187', 'TIGIST', 'ASEFA'),
+('MAU1601206', 'TIHUN', 'WONDIE'), ('MAU1601217', 'TIRUNESH', 'GIRMAW'),
+('MAU1601222', 'TSEGAYE', 'ADERAJEW'), ('MAU1601288', 'YABSIRA', 'DEMEKE'),
+('MAU1601300', 'YEAMLAKSIRA', 'ADANE'), ('MAU1601333', 'YESUF', 'HAMID'),
+('MAU1601342', 'YILKAL', 'DEMEKE'), ('MAU1601351', 'YOHANES', 'SETEGN');
 
-      INSERT INTO grades (student_id, course_name, quiz, project, mid_exam, final_exam)
-      VALUES ('MAU1600540', 'CS 3rd Year', 15, 20, 25, 40)
-      ON CONFLICT DO NOTHING;
+      INSERT INTO grades (student_id, course_name, mid_exam, quiz, project, final_exam) VALUES
+('MAU1600024', 'Computer Science', 22.5, 4, 19, 42), ('MAU1600056', 'Computer Science', 19.5, 3, 18, 27),
+('MAU1600090', 'Computer Science', 21.5, 3.5, 18, 43.5), ('MAU1600113', 'Computer Science', 20, 4, 18, 31.5),
+('MAU1600114', 'Computer Science', 20.5, 2, 18, 38), ('MAU1600170', 'Computer Science', 20, 3, 17, 34.5),
+('MAU1600243', 'Computer Science', 21.5, 4, 18, 44.5), ('MAU1600247', 'Computer Science', 19.5, 3, 17, 36.5),
+('MAU1600248', 'Computer Science', 19.5, 2.5, 17.5, 27), ('MAU1600269', 'Computer Science', 19, 3, 18.5, 22),
+('MAU1602191', 'Computer Science', 23, 2, 19, 41.5), ('MAU1600359', 'Computer Science', 18.5, 3, 17.5, 36.5),
+('MAU1600375', 'Computer Science', 17.5, 4, 18, 17.5), ('MAU1602192', 'Computer Science', 24, 3, 17.5, 33),
+('MAU1600478', 'Computer Science', 20, 2.5, 17.5, 37), ('MAU1600480', 'Computer Science', 19, 4, 18.5, 42.5),
+('MAU1600481', 'Computer Science', 14.5, 3, 18, 32), ('MAU1600506', 'Computer Science', 21.5, 2, 19, 44),
+('MAU1600524', 'Computer Science', 18, 2.5, 18, 36), ('MAU1600525', 'Computer Science', 16, 2, 18, 35),
+('MAU1600540', 'Computer Science', 15.5, 2, 19, 31), ('MAU1600545', 'Computer Science', 19.5, 4, 18, 30.5),
+('MAU1600557', 'Computer Science', 19, 3.5, 17.5, 39.5), ('MAU1600605', 'Computer Science', 19.5, 3.5, 18.5, 35.5),
+('MAU1600620', 'Computer Science', 22.5, 3, 18.5, 41), ('MAU1600683', 'Computer Science', 13.5, 2.5, 19, 35.5),
+('MAU1600704', 'Computer Science', 22.5, 2.5, 18, 38.5), ('MAU1600756', 'Computer Science', 24, 4, 17, 36.5),
+('MAU1600805', 'Computer Science', 17, 3.5, 18, 36.5), ('MAU1600822', 'Computer Science', 25, 3, 17, 23.5),
+('MAU1600979', 'Computer Science', 23.5, 2.5, 18.5, 42), ('MAU1600982', 'Computer Science', 19.5, 4, 18, 43),
+('MAU1602196', 'Computer Science', 23, 0, 17, 35), ('MAU1601098', 'Computer Science', 20, 2, 18, 33),
+('MAU1601148', 'Computer Science', 21.5, 3.5, 18, 36), ('MAU1601187', 'Computer Science', 20, 2, 19, 37),
+('MAU1601206', 'Computer Science', 18, 2.5, 18, 40), ('MAU1601217', 'Computer Science', 18.5, 2, 17.5, 33.5),
+('MAU1601222', 'Computer Science', 24.5, 3, 18.5, 43), ('MAU1601288', 'Computer Science', 21, 2, 17, 42),
+('MAU1601300', 'Computer Science', 20.5, 3, 17.5, 30.5), ('MAU1601333', 'Computer Science', 22, 4, 18, 39.5),
+('MAU1601342', 'Computer Science', 16, 2, 18, 33), ('MAU1601351', 'Computer Science', 23.5, 0, 18.5, 37.5);
     `);
     console.log("✅ Database Tables & Test Data Ready!");
   } catch (err) {
