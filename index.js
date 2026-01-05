@@ -121,9 +121,12 @@ bot.onText(/\/start/, (msg) => {
   const chatId = msg.chat.id;
   userState[chatId] = { step: "STUDENT_ID" };
 
+  // FORCE RESET: This clears any stuck state from yesterday
+  userState[chatId] = { step: "STUDENT_ID" };
+
   bot.sendMessage(
     chatId,
-    "👋 Welcome to see your result via Telegram Bot\n\nPlease enter your *Student ID*:",
+    "👋 Welcome to see your total result via this Bot\n\nPlease enter your *ID*:",
     { parse_mode: "Markdown" }
   );
 });
@@ -207,9 +210,9 @@ bot.on("message", async (msg) => {
       const response = `
 📄 *Student Grade Report*
 
-👤 Name       : ${row.student_name}
-🆔 Student ID : ${studentId}
-📘 Course     : ${row.course_name}
+👤 Name      : ${row.student_name}
+🆔 ID        :       ${studentId}
+📘 Course    : ${row.course_name}
 
 ━━━━━━━━━━━━━━━
 📊 *Scores:*
