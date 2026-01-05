@@ -126,7 +126,7 @@ bot.onText(/\/start/, (msg) => {
 
   bot.sendMessage(
     chatId,
-    "👋 Welcome to see your total result via this Bot\n\nPlease enter your *ID*:",
+    "👋 Welcome to see your grade result via this Bot\n\nPlease enter your *ID*:",
     { parse_mode: "Markdown" }
   );
 });
