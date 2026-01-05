@@ -67,55 +67,8 @@ initDb();
 //       );
 
 //       -- 3. Insert Students
-//       INSERT INTO students (student_id, student_name, father_name) VALUES
-//       ('MAU1600024', 'ABEL', 'SHEWANGZAW'), ('MAU1600056', 'ABYU', 'ESHETIE'),
-//       ('MAU1600090', 'AKILILU', 'AYKA'), ('MAU1600113', 'ALEMU', 'MEKETE'),
-//       ('MAU1600114', 'ALEMU', 'SEWNET'), ('MAU1600170', 'ASRESACH', 'ADUGNA'),
-//       ('MAU1600243', 'BELAYNEH', 'BEKELE'), ('MAU1600247', 'BELAYNESH', 'DIRESS'),
-//       ('MAU1600248', 'BELAYNESH', 'GETIE'), ('MAU1600269', 'BETELHEM', 'NIGATU'),
-//       ('MAU1602191', 'BEYENE', 'DEMEKE'), ('MAU1600359', 'BOSENA', 'SHUMET'),
-//       ('MAU1600375', 'DANIEL', 'ZIGABE'), ('MAU1602192', 'DIGIS', 'BIRHAN'),
-//       ('MAU1600478', 'ENATIHUN', 'YIMER'), ('MAU1600480', 'ENCHALEW', 'AZIMERAW'),
-//       ('MAU1600481', 'ENDALE', 'YIRGA'), ('MAU1600506', 'EYERUS', 'SHIBABAW'),
-//       ('MAU1600524', 'FASIKA', 'KIBURIE'), ('MAU1600525', 'FASIKA', 'SHEGAW'),
-//       ('MAU1600540', 'FETENECH', 'WORKU'), ('MAU1600545', 'FIKIRE', 'GIRMA'),
-//       ('MAU1600557', 'FTAMLAK', 'GETU'), ('MAU1600605', 'GETANEH', 'MARKIE'),
-//       ('MAU1600620', 'GIZACHEW', 'KASSA'), ('MAU1600683', 'HENOK', 'SFAT'),
-//       ('MAU1600704', 'HULUNAYEHU', 'ASHEBIR'), ('MAU1600756', 'KINDU', 'FIKAD'),
-//       ('MAU1600805', 'MANAYEH', 'BAYILE'), ('MAU1600822', 'MASTEWAL', 'MEHARIW'),
-//       ('MAU1600979', 'NADIYA', 'AZANAW'), ('MAU1600982', 'NAOL', 'ABEBE'),
-//       ('MAU1602196', 'SAMUEL', 'ALEMSW'), ('MAU1601098', 'SIMEGNAW', 'MUNYE'),
-//       ('MAU1601148', 'TEKEBA', 'AWEKE'), ('MAU1601187', 'TIGIST', 'ASEFA'),
-//       ('MAU1601206', 'TIHUN', 'WONDIE'), ('MAU1601217', 'TIRUNESH', 'GIRMAW'),
-//       ('MAU1601222', 'TSEGAYE', 'ADERAJEW'), ('MAU1601288', 'YABSIRA', 'DEMEKE'),
-//       ('MAU1601300', 'YEAMLAKSIRA', 'ADANE'), ('MAU1601333', 'YESUF', 'HAMID'),
-//       ('MAU1601342', 'YILKAL', 'DEMEKE'), ('MAU1601351', 'YOHANES', 'SETEGN');
 
-//       -- 4. Insert Grades
-//       INSERT INTO grades (student_id, course_name, mid_exam, quiz, project, final_exam) VALUES
-//       ('MAU1600024', 'Software engineering', 22.5, 4, 19, 42), ('MAU1600056', 'Software engineering', 19.5, 3, 18, 27),
-//       ('MAU1600090', 'Software engineering', 21.5, 3.5, 18, 43.5), ('MAU1600113', 'Software engineeringe', 20, 4, 18, 31.5),
-//       ('MAU1600114', 'Software engineering', 20.5, 2, 18, 38), ('MAU1600170', 'Software engineering', 20, 3, 17, 34.5),
-//       ('MAU1600243', 'Software engineering', 21.5, 4, 18, 44.5), ('MAU1600247', 'Software engineering', 19.5, 3, 17, 36.5),
-//       ('MAU1600248', 'Software engineering', 19.5, 2.5, 17.5, 27), ('MAU1600269', 'Software engineering', 19, 3, 18.5, 22),
-//       ('MAU1602191', 'Software engineering', 23, 2, 19, 41.5), ('MAU1600359', 'Software engineering', 18.5, 3, 17.5, 36.5),
-//       ('MAU1600375', 'Software engineering', 17.5, 4, 18, 17.5), ('MAU1602192', 'Software engineering', 24, 3, 17.5, 33),
-//       ('MAU1600478', 'Software engineering', 20, 2.5, 17.5, 37), ('MAU1600480', 'Software engineering', 19, 4, 18.5, 42.5),
-//       ('MAU1600481', 'Software engineering', 14.5, 3, 18, 32), ('MAU1600506', 'Software engineering', 21.5, 2, 19, 44),
-//       ('MAU1600524', 'Software engineering', 18, 2.5, 18, 36), ('MAU1600525', 'Software engineering', 16, 2, 18, 35),
-//       ('MAU1600540', 'Software engineering', 15.5, 2, 19, 31), ('MAU1600545', 'Software engineering', 19.5, 4, 18, 30.5),
-//       ('MAU1600557', 'Software engineering', 19, 3.5, 17.5, 39.5), ('MAU1600605', 'Software engineering', 19.5, 3.5, 18.5, 35.5),
-//       ('MAU1600620', 'Software engineering', 22.5, 3, 18.5, 41), ('MAU1600683', 'Software engineering', 13.5, 2.5, 19, 35.5),
-//       ('MAU1600704', 'Software engineering', 22.5, 2.5, 18, 38.5), ('MAU1600756', 'Software engineering', 24, 4, 17, 36.5),
-//       ('MAU1600805', 'Software engineering', 17, 3.5, 18, 36.5), ('MAU1600822', 'Software engineering', 25, 3, 17, 23.5),
-//       ('MAU1600979', 'Software engineering', 23.5, 2.5, 18.5, 42), ('MAU1600982', 'Software engineering', 19.5, 4, 18, 43),
-//       ('MAU1602196', 'Software engineering', 23, 0, 17, 35), ('MAU1601098', 'Software engineering', 20, 2, 18, 33),
-//       ('MAU1601148', 'Software engineering', 21.5, 3.5, 18, 36), ('MAU1601187', 'Software engineering', 20, 2, 19, 37),
-//       ('MAU1601206', 'Software engineering', 18, 2.5, 18, 40), ('MAU1601217', 'Software engineering', 18.5, 2, 17.5, 33.5),
-//       ('MAU1601222', 'Software engineering', 24.5, 3, 18.5, 43), ('MAU1601288', 'Software engineering', 21, 2, 17, 42),
-//       ('MAU1601300', 'Software engineering', 20.5, 3, 17.5, 30.5), ('MAU1601333', 'Software engineering', 22, 4, 18, 39.5),
-//       ('MAU1601342', 'Software engineering', 16, 2, 18, 33), ('MAU1601351', 'Software engineering', 23.5, 0, 18.5, 37.5);
-//     `);
+//
 //     console.log("✅ Fresh Data Loaded Successfully!");
 //   } catch (err) {
 //     console.error("❌ DB Init Error:", err.message);
