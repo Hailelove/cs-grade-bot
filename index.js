@@ -65,7 +65,7 @@ const bot = new TelegramBot(process.env.BOT_TOKEN);
 /* ===============================
    4. WEBHOOK CONFIGURATION
 ================================ */
-const WEBHOOK_URL = `https://cs-grade-bot-2.onrender.com//bot${process.env.BOT_TOKEN}`;
+const WEBHOOK_URL = `https://cs-grade-bot-2.onrender.com/bot${process.env.BOT_TOKEN}`;
 
 app.post(`/bot${process.env.BOT_TOKEN}`, (req, res) => {
   bot.processUpdate(req.body);
@@ -74,7 +74,7 @@ app.post(`/bot${process.env.BOT_TOKEN}`, (req, res) => {
 
 (async () => {
   try {
-    await bot.deleteWebhook();
+    await bot.deleteWebHook(); // ✅ Correct capitalization
     await bot.setWebHook(WEBHOOK_URL);
     console.log("✅ Telegram webhook set successfully");
   } catch (err) {
