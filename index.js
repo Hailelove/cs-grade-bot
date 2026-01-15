@@ -1,16 +1,13 @@
 const express = require("express");
-
 const TelegramBot = require("node-telegram-bot-api");
 const pool = require("./db");
 require("dotenv").config();
 
-// --- 1. NEW: AUTO-DATABASE SETUP ---
-
-// --- 1. CLEAN DATABASE SETUP ---
+/* ===============================
+   1. DATABASE INITIALIZATION
+================================ */
 const initDb = async () => {
   try {
-    // We only make sure the tables exist.
-    // We REMOVED Truncate and the long list of Inserts.
     await pool.query(`
       CREATE TABLE IF NOT EXISTS students (
         student_id TEXT PRIMARY KEY,
@@ -36,84 +33,63 @@ const initDb = async () => {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `);
-    console.log("✅ Database structure verified. Using existing data.");
+    console.log("✅ Database structure verified.");
   } catch (err) {
     console.error("❌ DB Init Error:", err.message);
   }
 };
 initDb();
 
-// const initDb = async () => {
-//   try {
-//     // 1. Wipe old data to avoid conflicts during testing
-//     await pool.query(`
-//       TRUNCATE grades, students RESTART IDENTITY;
-
-//       -- 2. Create Tables (Standard)
-//       CREATE TABLE IF NOT EXISTS students (
-//         student_id TEXT PRIMARY KEY,
-//         student_name TEXT,
-//         father_name TEXT
-//       );
-
-//       CREATE TABLE IF NOT EXISTS grades (
-//         id SERIAL PRIMARY KEY,
-//         student_id TEXT REFERENCES students(student_id),
-//         course_name TEXT,
-//         quiz NUMERIC DEFAULT 0,
-//         project NUMERIC DEFAULT 0,
-//         mid_exam NUMERIC DEFAULT 0,
-//         final_exam NUMERIC DEFAULT 0
-//       );
-
-//       -- 3. Insert Students
-
-//
-//     console.log("✅ Fresh Data Loaded Successfully!");
-//   } catch (err) {
-//     console.error("❌ DB Init Error:", err.message);
-//   }
-// };
-// initDb();
-
-// -----------------------------------
-
-// --- ADD THIS PORT BINDING BLOCK ---
+/* ===============================
+   2. EXPRESS APP SETUP
+================================ */
 const app = express();
-const PORT = process.env.PORT || 10000;
-app.get("/", (req, res) => res.send("Bot is running..."));
-app.listen(PORT, () => console.log(`Server listening on port ${PORT}`));
-// ------------------------------------
+app.use(express.json());
 
+const PORT = process.env.PORT || 10000;
+
+// Health check (IMPORTANT for Render)
+app.get("/", (req, res) => {
+  res.send("Bot is running...");
+});
+
+/* ===============================
+   3. TELEGRAM BOT (WEBHOOK MODE)
+================================ */
 if (!process.env.BOT_TOKEN) {
   throw new Error("❌ BOT_TOKEN is missing");
 }
 
-// const bot = new TelegramBot(process.env.BOT_TOKEN, { polling: true });
-const bot = new TelegramBot(process.env.BOT_TOKEN, {
-  polling: {
-    autoStart: true,
-    params: {
-      timeout: 10,
-    },
-  },
+const bot = new TelegramBot(process.env.BOT_TOKEN);
+
+/* ===============================
+   4. WEBHOOK CONFIGURATION
+================================ */
+const WEBHOOK_URL = `https://cs-grade-bot-2.onrender.com//bot${process.env.BOT_TOKEN}`;
+
+app.post(`/bot${process.env.BOT_TOKEN}`, (req, res) => {
+  bot.processUpdate(req.body);
+  res.sendStatus(200);
 });
-// Add this line right after to clear any "hanging" updates
-bot.on("polling_error", (error) => {
-  if (error.code === "ETELEGRAM" && error.message.includes("409 Conflict")) {
-    console.log("Waiting for old session to terminate...");
-  } else {
-    console.error("Polling Error:", error);
+
+(async () => {
+  try {
+    await bot.deleteWebhook();
+    await bot.setWebHook(WEBHOOK_URL);
+    console.log("✅ Telegram webhook set successfully");
+  } catch (err) {
+    console.error("❌ Webhook setup failed:", err.message);
   }
-});
+})();
+
+/* ===============================
+   5. BOT LOGIC
+================================ */
 const userState = {};
 
-// Start command
+// START COMMAND
 bot.onText(/\/start/, (msg) => {
   const chatId = msg.chat.id;
-  userState[chatId] = { step: "STUDENT_ID" };
-
-  // FORCE RESET: This clears any stuck state from yesterday
   userState[chatId] = { step: "STUDENT_ID" };
 
   bot.sendMessage(
@@ -123,7 +99,7 @@ bot.onText(/\/start/, (msg) => {
   );
 });
 
-// Handle messages
+// MESSAGE HANDLER
 bot.on("message", async (msg) => {
   const chatId = msg.chat.id;
   const text = msg.text;
@@ -133,7 +109,7 @@ bot.on("message", async (msg) => {
   const state = userState[chatId];
 
   try {
-    // STEP 1: Student ID
+    // STEP 1: STUDENT ID
     if (state.step === "STUDENT_ID") {
       state.studentId = text.trim();
       state.step = "FATHER_NAME";
@@ -142,11 +118,8 @@ bot.on("message", async (msg) => {
       });
     }
 
-    // STEP 2: Father Name
+    // STEP 2: FATHER NAME
     if (state.step === "FATHER_NAME") {
-      const studentId = state.studentId;
-      const fatherName = text.trim();
-
       const result = await pool.query(
         `
         SELECT s.student_name, g.*
@@ -155,28 +128,25 @@ bot.on("message", async (msg) => {
         WHERE s.student_id = $1
         AND LOWER(s.father_name) = LOWER($2)
         `,
-        [studentId, fatherName]
+        [state.studentId, text.trim()]
       );
 
       if (result.rows.length === 0) {
         delete userState[chatId];
         return bot.sendMessage(
           chatId,
-          "```\n        ❌ Student not found.\nPlease check your ID and father name.\n```",
-          { parse_mode: "Markdown" }
+          "❌ Student not found.\nPlease check your ID and father name."
         );
       }
 
       const row = result.rows[0];
 
-      // Calculate total
       const total =
         Number(row.quiz) +
         Number(row.project) +
         Number(row.mid_exam) +
         Number(row.final_exam);
 
-      // Grade calculation
       let letterGrade = "F";
       if (total >= 90) letterGrade = "A+";
       else if (total >= 85) letterGrade = "A";
@@ -188,70 +158,68 @@ bot.on("message", async (msg) => {
       else if (total >= 50) letterGrade = "C";
       else if (total >= 45) letterGrade = "C-";
       else if (total >= 40) letterGrade = "D";
-      else if (total <= 40) letterGrade = "F";
 
-      // Grade message
-      let gradeMessage = "🤚 Unsatisfactory";
+      let gradeMessage = "✋ Fail";
       if (total > 85) gradeMessage = "👏 Excellent";
       else if (total > 80) gradeMessage = "👍 Very Good";
       else if (total > 70) gradeMessage = "👌 Good";
       else if (total > 50) gradeMessage = "✌️ Satisfactory";
       else if (total >= 40) gradeMessage = "🤚 Unsatisfactory";
-      else gradeMessage = "✋ Fail";
 
       const response = `
 📄 *Student Grade Report*
 
-👤 Name      : ${row.student_name}
-🆔 ID        :       ${studentId}
-📘 Course    : ${row.course_name}
+👤 Name: ${row.student_name}
+🆔 ID: ${state.studentId}
+📘 Course: ${row.course_name}
 
 ━━━━━━━━━━━━━━━
-📊 *Scores:*
-👉 Quiz: ${row.quiz}
-👉 Project: ${row.project}
-👉 Mid Exam: ${row.mid_exam}
-👉 Final Exam: ${row.final_exam}
+📊 *Scores*
+Quiz: ${row.quiz}
+Project: ${row.project}
+Mid Exam: ${row.mid_exam}
+Final Exam: ${row.final_exam}
 
 ━━━━━━━━━━━━━━━
-✅ Total mark: ${total}/100
-🏆 *Your grade is:* ${letterGrade}
-" " ${gradeMessage}
+✅ Total: ${total}/100
+🏆 Grade: *${letterGrade}*
+${gradeMessage}
 `;
 
       await bot.sendMessage(chatId, response, { parse_mode: "Markdown" });
 
-      // Ask for complaint
       state.step = "COMPLAINT";
       return bot.sendMessage(
         chatId,
-        "📌 If you want to submit a complaint about your assessment, you can write here.\n Unless type /skip to finish."
+        "📌 Write a complaint if any.\nOr type /skip to finish."
       );
     }
 
-    // STEP 3: Handle Complaint
+    // STEP 3: COMPLAINT
     if (state.step === "COMPLAINT") {
-      const complaintText = text.trim();
-
-      if (complaintText.toLowerCase() === "/skip") {
+      if (text.toLowerCase() === "/skip") {
         delete userState[chatId];
         return bot.sendMessage(chatId, "✅ Thank you! No complaint submitted.");
       }
 
       await pool.query(
-        "INSERT INTO complaints(student_id, course_name, complaint) VALUES ($1, $2, $3)",
-        [state.studentId, state.courseName || null, complaintText]
+        "INSERT INTO complaints(student_id, complaint) VALUES ($1, $2)",
+        [state.studentId, text]
       );
 
       delete userState[chatId];
-      return bot.sendMessage(
-        chatId,
-        "✅ Your complaint has been submitted. I will try to review it soon."
-      );
+      return bot.sendMessage(chatId, "✅ Complaint submitted successfully.");
     }
   } catch (err) {
-    console.error("BOT ERROR 👉", err); // Changed from err.message to err
-    bot.sendMessage(chatId, `⚠️ Server error: ${err.message}`);
+    console.error("BOT ERROR:", err);
     delete userState[chatId];
+    bot.sendMessage(chatId, "⚠️ Server error. Try again later.");
   }
+});
+
+/* ===============================
+   6. START SERVER
+================================ */
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
 });
