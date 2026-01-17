@@ -125,6 +125,7 @@ bot.on("message", async (msg) => {
         `,
         [state.studentId, text.trim()]
       );
+      console.log("DEBUG BOT QUERY:", state.studentId, result.rows[0]);
 
       if (result.rows.length === 0) {
         delete userState[chatId];
