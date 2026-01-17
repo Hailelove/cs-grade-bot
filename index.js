@@ -1,3 +1,4 @@
+// index.js
 const express = require("express");
 const TelegramBot = require("node-telegram-bot-api");
 const pool = require("./db");
@@ -48,10 +49,8 @@ app.use(express.json());
 
 const PORT = process.env.PORT || 10000;
 
-// Health check (IMPORTANT for Render)
-app.get("/", (req, res) => {
-  res.send("Bot is running...");
-});
+// Health check for Render
+app.get("/", (req, res) => res.send("Bot is running..."));
 
 /* ===============================
    3. TELEGRAM BOT (WEBHOOK MODE)
@@ -62,10 +61,8 @@ if (!process.env.BOT_TOKEN) {
 
 const bot = new TelegramBot(process.env.BOT_TOKEN);
 
-/* ===============================
-   4. WEBHOOK CONFIGURATION
-================================ */
-const WEBHOOK_URL = `https://cs-grade-bot-2.onrender.com/bot${process.env.BOT_TOKEN}`;
+// Webhook setup
+const WEBHOOK_URL = `https://${process.env.RENDER_SERVICE_NAME}.onrender.com/bot${process.env.BOT_TOKEN}`;
 
 app.post(`/bot${process.env.BOT_TOKEN}`, (req, res) => {
   bot.processUpdate(req.body);
@@ -74,7 +71,7 @@ app.post(`/bot${process.env.BOT_TOKEN}`, (req, res) => {
 
 (async () => {
   try {
-    await bot.deleteWebHook(); // ✅ Correct capitalization
+    await bot.deleteWebHook();
     await bot.setWebHook(WEBHOOK_URL);
     console.log("✅ Telegram webhook set successfully");
   } catch (err) {
@@ -83,7 +80,7 @@ app.post(`/bot${process.env.BOT_TOKEN}`, (req, res) => {
 })();
 
 /* ===============================
-   5. BOT LOGIC
+   4. BOT LOGIC
 ================================ */
 const userState = {};
 
@@ -92,11 +89,9 @@ bot.onText(/\/start/, (msg) => {
   const chatId = msg.chat.id;
   userState[chatId] = { step: "STUDENT_ID" };
 
-  bot.sendMessage(
-    chatId,
-    "👋 Welcome to see your grade result via this Bot\n\nPlease enter your *ID*:",
-    { parse_mode: "Markdown" }
-  );
+  bot.sendMessage(chatId, "👋 Welcome! Enter your *Student ID*:", {
+    parse_mode: "Markdown",
+  });
 });
 
 // MESSAGE HANDLER
@@ -113,7 +108,7 @@ bot.on("message", async (msg) => {
     if (state.step === "STUDENT_ID") {
       state.studentId = text.trim();
       state.step = "FATHER_NAME";
-      return bot.sendMessage(chatId, "👨 Please enter your *Father Name*:", {
+      return bot.sendMessage(chatId, "👨 Enter your *Father Name*:", {
         parse_mode: "Markdown",
       });
     }
@@ -135,11 +130,14 @@ bot.on("message", async (msg) => {
         delete userState[chatId];
         return bot.sendMessage(
           chatId,
-          "❌ Student not found.\nPlease check your ID and father name."
+          "❌ Student not found. Check your ID and father name."
         );
       }
 
       const row = result.rows[0];
+
+      // DEBUG LOG: confirm data
+      console.log("DEBUG STUDENT ROW:", row);
 
       const total =
         Number(row.quiz) +
@@ -147,6 +145,7 @@ bot.on("message", async (msg) => {
         Number(row.mid_exam) +
         Number(row.final_exam);
 
+      // Letter grade
       let letterGrade = "F";
       if (total >= 90) letterGrade = "A+";
       else if (total >= 85) letterGrade = "A";
@@ -159,6 +158,7 @@ bot.on("message", async (msg) => {
       else if (total >= 45) letterGrade = "C-";
       else if (total >= 40) letterGrade = "D";
 
+      // Grade message
       let gradeMessage = "✋ Fail";
       if (total > 85) gradeMessage = "👏 Excellent";
       else if (total > 80) gradeMessage = "👍 Very Good";
@@ -188,10 +188,11 @@ ${gradeMessage}
 
       await bot.sendMessage(chatId, response, { parse_mode: "Markdown" });
 
+      // STEP 3: complaint
       state.step = "COMPLAINT";
       return bot.sendMessage(
         chatId,
-        "📌 Write a complaint if any.\nOr type /skip to finish."
+        "📌 Write complaint or type /skip to finish."
       );
     }
 
@@ -218,7 +219,7 @@ ${gradeMessage}
 });
 
 /* ===============================
-   6. START SERVER
+   5. START SERVER
 ================================ */
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
